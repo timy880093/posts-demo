@@ -47,37 +47,8 @@ $ npm install
     ```
 * execute: `npm run start:dev`
 
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
 
 ## Reference
 * create imgur album: https://www.digitbin.com/how-to-create-an-album-on-imgur/
 * register imgur app token: https://tools.wingzero.tw/article/sn/1327
 * queue producer & consumer: https://github.com/nestjs/nest/tree/master/sample/26-queues
-
-## License
-
-Nest is [MIT licensed](LICENSE).

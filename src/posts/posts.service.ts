@@ -27,8 +27,8 @@ export class PostsService {
   async createPost(dto: CreatePostDto) {
     try {
       this.validate(dto);
-      const maxId = await this.postsRepository.getMaxId();
-      const postsEntity = this.convert(maxId + 1, dto.coverUrl);
+      const id = await this.parseId(dto);
+      const postsEntity = this.convert(id, dto.coverUrl);
       await this.postsRepository.createPost(postsEntity);
       this.logger.log('createPost ok');
     } catch (e) {
@@ -37,7 +37,15 @@ export class PostsService {
     }
   }
 
-  validate(dto: CreatePostDto) {
+  private async parseId(dto: CreatePostDto) {
+    if (!dto.id) {
+      return (await this.postsRepository.getMaxId()) + 1;
+    } else {
+      return dto.id;
+    }
+  }
+
+  private validate(dto: CreatePostDto) {
     if (!dto.coverUrl || !this.isUrl(dto.coverUrl)) {
       throw Error('coverUrl is invalid');
     }

@@ -1,0 +1,13 @@
+# create posts
+POST http://localhost:3000/posts
+Content-Type: application/json
+
+{
+  "coverUrl": "https://media.istockphoto.com/id/1952691908/photo/kayaking-in-crete.jpg?s=1024x1024&w=is&k=20&c=6DxMHmM-sqVKLIrkdvFO8BvV9e5EWjpXB30VEaW0Qyc="
+}
+
+###
+
+# get posts
+GET http://localhost:3000/posts
+Content-Type: application/json

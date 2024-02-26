@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import {HttpException, Injectable, Logger} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
 import axios from 'axios';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -45,7 +45,7 @@ export class ImgurService {
       grant_type: 'refresh_token'
     };
     const config = {
-      headers: { 'Content-Type': 'application/json' }
+      headers: {'Content-Type': 'application/json'}
     };
     return await axios.post(this.tokenUrl, data, config)
       .then(response => {
@@ -73,7 +73,32 @@ export class ImgurService {
   //   return response;
   // }
 
-  async uploadToImgur(url: string) {
+  async authAndUploadImgur(url: string, delay: number = 0) {
+    try {
+      return await this.uploadImgur(url, delay);
+    } catch (e) {
+      if (e.message.includes('403')) {
+        const accesToken = await this.getAccessToken();
+        this.refreshAccessToken(accesToken);
+        try {
+          return this.uploadImgur(url, delay);
+        } catch (e) {
+          this.logger.log('uploadToImgur error: new token: ' + e.message)
+          throw new HttpException(e.message, 403);
+        }
+      } else if (e.message.includes('429')) {
+        this.logger.log('uploadToImgur warn: Too Many Requests' + e.message)
+        throw new HttpException(e.message, 429);
+      } else {
+        this.logger.log('uploadToImgur error: new token: ' + e.message)
+        throw new HttpException(e.message, 400);
+      }
+    }
+  }
+
+  async uploadImgur(url: string, delay: number = 0) {
+    await this.wait(delay);
+
     const data = new FormData();
     data.append('album', this.albumId);
     data.append('image', url);
@@ -98,6 +123,14 @@ export class ImgurService {
         throw Error('uploadToImgur error: ' + error.message);
       });
 
+  }
+
+  async wait(second: number) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve('')
+      }, second * 1000)
+    });
   }
 
 }

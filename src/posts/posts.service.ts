@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { PostsRepository } from './posts.repository';
-import { PostsEntity } from './dto/posts.entity';
-import { CreatePostDto } from './dto/create-post.dto';
-import { PostStatus } from './dto/post-status.enum';
+import {Injectable, Logger} from '@nestjs/common';
+import {PostsRepository} from './posts.repository';
+import {PostsEntity} from './dto/posts.entity';
+import {CreatePostDto} from './dto/create-post.dto';
+import {PostStatus} from './dto/post-status.enum';
 import * as moment from 'moment';
 
 

@@ -1,5 +1,5 @@
-import { Body, Controller, HttpException, Logger, Post } from '@nestjs/common';
-import { ImgurService } from './imgur.service';
+import {Body, Controller, HttpException, Logger, Post} from '@nestjs/common';
+import {ImgurService} from './imgur.service';
 
 @Controller('imgur')
 export class ImgurController {
@@ -22,23 +22,7 @@ export class ImgurController {
   @Post('image')
   async uploadToImgur(@Body() data: any) {
     this.logger.log('uploadToImgur');
-    try {
-      return await this.imgurService.uploadToImgur(data.coverUrl);
-    } catch (e) {
-      if (e.message.includes('403')) {
-        const accesToken = await this.imgurService.getAccessToken();
-        this.imgurService.refreshAccessToken(accesToken);
-        try {
-          return this.imgurService.uploadToImgur(data.coverUrl);
-        } catch (e) {
-          this.logger.log('uploadToImgur error: new token: ' + e.message)
-          throw new HttpException(e.message, 403);
-        }
-      } else {
-        this.logger.log('uploadToImgur error: new token: ' + e.message)
-        throw new HttpException(e.message, 400);
-      }
-    }
+    return this.imgurService.authAndUploadImgur(data.coverUrl)
   }
 
 }

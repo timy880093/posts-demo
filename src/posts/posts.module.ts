@@ -1,17 +1,16 @@
-import { Module } from '@nestjs/common';
-import { PostsController } from './posts.controller';
-import { PostsService } from './posts.service';
-import { PostsRepository } from './posts.repository';
-import { ConfigModule } from '@nestjs/config';
-import * as process from 'process';
-import { ScheduleModule } from '@nestjs/schedule';
-import { TaskService } from './task/task.service';
-import { BullModule } from '@nestjs/bull';
-import { QueueService } from './queue/queue.service';
-import { join } from 'path';
-import { ImgurService } from './imgur/imgur.service';
-import { ImgurController } from './imgur/imgur.controller';
+import {Module} from '@nestjs/common';
+import {PostsController} from './posts.controller';
+import {PostsService} from './posts.service';
+import {PostsRepository} from './posts.repository';
+import {ConfigModule} from '@nestjs/config';
+import {ScheduleModule} from '@nestjs/schedule';
+import {TaskService} from './task/task.service';
+import {BullModule} from '@nestjs/bull';
+import {QueueProducer} from './queue/queue.producer';
+import {ImgurService} from './imgur/imgur.service';
+import {ImgurController} from './imgur/imgur.controller';
 import configuration from '../config/configuration';
+import {QueueConsumer} from "./queue/queue.consumer";
 
 @Module({
   imports: [
@@ -20,12 +19,6 @@ import configuration from '../config/configuration';
       load: [configuration]
     }),
     ScheduleModule.forRoot(),
-    BullModule.forRoot({
-      redis: {
-        host: 'localhost',
-        port: 6379
-      }
-    }),
     BullModule.registerQueue({
       name: 'image',
       // processors: [join(__dirname, 'processor.js')]
@@ -33,6 +26,7 @@ import configuration from '../config/configuration';
   ],
   controllers: [PostsController, ImgurController],
   providers: [
+    QueueConsumer,
     PostsService,
     PostsRepository,
     // {
@@ -40,7 +34,7 @@ import configuration from '../config/configuration';
     //   useFactory: () => new PostsRepository(process.env.DATABASE_FILE, process.env.DATABASE_NAME)
     // },
     TaskService,
-    QueueService,
+    QueueProducer,
     ImgurService
   ]
 })

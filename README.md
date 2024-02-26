@@ -1,36 +1,51 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### posts-demo
+
+* api:
+    * getAllPosts：取得所有 posts
+    * uploadImgur：上傳圖片到 imgur
+* schedule：
+    * 每分鐘執行一次，每次去 db 查 IDLE 狀態的 post，並加入 queue
+* queue：
+    * 每次執行前先 delay 30 秒，避免 429 發生
+    * 任務執行完後，更新 db 的 post 狀態為 DONE
+    * 任務執行失敗，更新 db 的 post 狀態為 ERROR
 
 ## Installation
 
 ```bash
 $ npm install
 ```
+
+## Prepare
+1. 註冊 Imgur，取得 album_id，請參照 https://www.digitbin.com/how-to-create-an-album-on-imgur/
+2. 註冊 Imgur app 服務，取得以下資訊，請參照 https://tools.wingzero.tw/article/sn/1327
+    * client_id
+    * client_secret
+    * refresh_token
+3. 將以上資訊填入 `.env` 檔案
+4. 使用 docker 建立 redis，須先安裝 docker-compose，並執行建立 redis
+    ```
+    docker-compose up -d
+    ```
+5. 
+
+## Execution
+
+* config: add `.env` at rootPath
+    ```
+    PORT=3000
+    DATABASE_FILE=C:\_Code\Nodejs\posts-demo\db.json
+    DATABASE_NAME=posts
+    
+    IMGUR_TOKEN_URL=https://api.imgur.com/oauth2/token
+    IMGUR_CLIENT_ID=7cd2c86728bbcc2
+    IMGUR_CLIENT_SECRET=d72573168c2083e1ee89a582f66c65de41b90a2c
+    IMGUR_REFRESH_TOKEN=5e499f00e54bbf4911f9f41741acc71be58a9969
+    IMGUR_ALBUM_ID=ilBSdia
+    ```
+* execute: `npm run start:dev`
 
 ## Running the app
 
@@ -58,20 +73,11 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Reference
+* create imgur album: https://www.digitbin.com/how-to-create-an-album-on-imgur/
+* register imgur app token: https://tools.wingzero.tw/article/sn/1327
+* queue producer & consumer: https://github.com/nestjs/nest/tree/master/sample/26-queues
 
 ## License
 
 Nest is [MIT licensed](LICENSE).
-
-## Resource
-* register imgur app token: https://api.imgur.com/oauth2/addclient
-* 

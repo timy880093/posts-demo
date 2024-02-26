@@ -1,4 +1,4 @@
-import { PostStatus } from './post-status.enum';
+import {PostStatus} from './post-status.enum';
 
 export class PostsEntity {
   readonly id: number;

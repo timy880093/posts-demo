@@ -1,0 +1,63 @@
+{
+  "posts": {
+    "maxId": 7,
+    "data": [
+      {
+        "id": 1,
+        "coverUrl": "https://media.istockphoto.com/id/1952691908/photo/kayaking-in-crete.jpg?s=1024x1024&w=is&k=20&c=6DxMHmM-sqVKLIrkdvFO8BvV9e5EWjpXB30VEaW0Qyc=",
+        "imgurCoverUrl": null,
+        "status": "IDLE",
+        "createAt": "2024-02-25 22:55:46",
+        "updateAt": "2024-02-25 22:55:46"
+      },
+      {
+        "id": 2,
+        "coverUrl": "https://media.istockphoto.com/id/1952691908/photo/kayaking-in-crete.jpg?s=1024x1024&w=is&k=20&c=6DxMHmM-sqVKLIrkdvFO8BvV9e5EWjpXB30VEaW0Qyc=",
+        "imgurCoverUrl": null,
+        "status": "IDLE",
+        "createAt": "2024-02-25 22:55:55",
+        "updateAt": "2024-02-25 22:55:55"
+      },
+      {
+        "id": 3,
+        "coverUrl": "https://media.istockphoto.com/id/1952691908/photo/kayaking-in-crete.jpg?s=1024x1024&w=is&k=20&c=6DxMHmM-sqVKLIrkdvFO8BvV9e5EWjpXB30VEaW0Qyc=",
+        "imgurCoverUrl": null,
+        "status": "IDLE",
+        "createAt": "2024-02-25 23:30:11",
+        "updateAt": "2024-02-25 23:30:11"
+      },
+      {
+        "id": 4,
+        "coverUrl": "https://media.istockphoto.com/id/1952691908/photo/kayaking-in-crete.jpg?s=1024x1024&w=is&k=20&c=6DxMHmM-sqVKLIrkdvFO8BvV9e5EWjpXB30VEaW0Qyc=",
+        "imgurCoverUrl": null,
+        "status": "IDLE",
+        "createAt": "2024-02-25 23:31:07",
+        "updateAt": "2024-02-25 23:31:07"
+      },
+      {
+        "id": 5,
+        "coverUrl": "https://media.istockphoto.com/id/1952691908/photo/kayaking-in-crete.jpg?s=1024x1024&w=is&k=20&c=6DxMHmM-sqVKLIrkdvFO8BvV9e5EWjpXB30VEaW0Qyc=",
+        "imgurCoverUrl": null,
+        "status": "IDLE",
+        "createAt": "2024-02-25 23:31:08",
+        "updateAt": "2024-02-25 23:31:08"
+      },
+      {
+        "id": 6,
+        "coverUrl": "https://media.istockphoto.com/id/1952691908/photo/kayaking-in-crete.jpg?s=1024x1024&w=is&k=20&c=6DxMHmM-sqVKLIrkdvFO8BvV9e5EWjpXB30VEaW0Qyc=",
+        "imgurCoverUrl": null,
+        "status": "IDLE",
+        "createAt": "2024-02-25 23:32:09",
+        "updateAt": "2024-02-25 23:32:09"
+      },
+      {
+        "id": 7,
+        "coverUrl": "https://media.istockphoto.com/id/1952691908/photo/kayaking-in-crete.jpg?s=1024x1024&w=is&k=20&c=6DxMHmM-sqVKLIrkdvFO8BvV9e5EWjpXB30VEaW0Qyc=",
+        "imgurCoverUrl": null,
+        "status": "IDLE",
+        "createAt": "2024-02-25 23:37:20",
+        "updateAt": "2024-02-25 23:37:20"
+      }
+    ]
+  }
+}

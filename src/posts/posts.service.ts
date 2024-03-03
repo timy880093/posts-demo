@@ -1,9 +1,10 @@
-import {Injectable, Logger} from '@nestjs/common';
-import {PostsRepository} from './posts.repository';
-import {PostsEntity} from './dto/posts.entity';
-import {CreatePostDto} from './dto/create-post.dto';
-import {PostStatus} from './dto/post-status.enum';
+import { Injectable, Logger } from '@nestjs/common';
+import { PostsRepository } from './posts.repository';
+import { PostsEntity } from './dto/posts.entity';
+import { CreatePostDto } from './dto/create-post.dto';
+import { PostStatus } from './dto/post-status.enum';
 import * as moment from 'moment';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 
 @Injectable()
@@ -19,29 +20,32 @@ export class PostsService {
       this.logger.log('getPosts ok: ', json);
       return json;
     } catch (e) {
-      this.logger.log('getPosts error: ', e.message);
+      this.logger.error('getPosts error: ', e.message);
       throw Error('getPosts error: ' + e.message);
     }
   }
 
   async createPost(dto: CreatePostDto) {
+    this.logger.debug('createPost: ', dto);
     try {
       this.validate(dto);
-      const id = await this.parseId(dto);
-      const postsEntity = this.convert(id, dto.coverUrl);
-      await this.postsRepository.createPost(postsEntity);
-      this.logger.log('createPost ok');
+      const entity = PostsEntity.create(dto.id, dto.coverUrl, PostStatus.IDLE, moment().format('YYYY-MM-DD HH:mm:ss'));
+      await this.postsRepository.createPost(entity);
+      this.logger.log('createPost ok: ', entity);
     } catch (e) {
-      this.logger.log('createPost error: ', e.message);
+      this.logger.error('createPost error: ', e.message);
       throw Error('createPost error: ' + e.message);
     }
   }
 
-  private async parseId(dto: CreatePostDto) {
-    if (!dto.id) {
-      return (await this.postsRepository.getMaxId()) + 1;
-    } else {
-      return dto.id;
+  async updatePost(dto: UpdatePostDto) {
+    this.logger.debug('updatePost: ', dto);
+    try {
+      const entity = await this.postsRepository.updatePost(dto);
+      this.logger.log('updatePost ok: ', entity);
+    } catch (e) {
+      this.logger.error('updatePost error: ', e.message);
+      throw Error('updatePost error: ' + e.message);
     }
   }
 
@@ -60,12 +64,12 @@ export class PostsService {
     }
   }
 
-  convert(maxId: number, coverUrl: string): PostsEntity {
-    this.logger.debug('execute convert');
-    return new PostsEntity(maxId, coverUrl, null, PostStatus.IDLE, moment().format('YYYY-MM-DD HH:mm:ss'));
+  async getPostsByStatus(status: PostStatus) {
+    try {
+      return this.postsRepository.getPostsByStatus(status);
+    } catch (e) {
+      throw Error('getPostsByStatus error: ' + e.message);
+    }
   }
 
-  // async promissHandler<T>(promise: Promise<T>):Promise<[Error, T]>
-  //   return await promise.then(result => [null, result]).catch(error => [error, null]);
-  // }
 }

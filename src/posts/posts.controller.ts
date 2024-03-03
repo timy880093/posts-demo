@@ -1,6 +1,7 @@
-import {Body, Controller, Get, HttpException, HttpStatus, Post} from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Put } from '@nestjs/common';
 import {PostsService} from './posts.service';
 import {CreatePostDto} from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -8,7 +9,7 @@ export class PostsController {
   }
 
   @Get()
-  async getPosts() {
+  async getPosts(): Promise<string>{
     try {
       return await this.postsService.getPosts();
     } catch (e) {
@@ -17,9 +18,18 @@ export class PostsController {
   }
 
   @Post()
-  async createPosts(@Body() createPostDto: CreatePostDto) {
+  async createPosts(@Body() dto: CreatePostDto) {
     try {
-      await this.postsService.createPost(createPostDto);
+      await this.postsService.createPost(dto);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put()
+  async updatePosts(@Body() dto: UpdatePostDto) {
+    try {
+      await this.postsService.updatePost(dto);
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }

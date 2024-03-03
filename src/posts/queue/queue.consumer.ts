@@ -4,6 +4,7 @@ import {Process, Processor} from '@nestjs/bull';
 import {ImgurService} from "../imgur/imgur.service";
 import {PostsRepository} from "../posts.repository";
 import {PostStatus} from "../dto/post-status.enum";
+import { UpdatePostDto } from '../dto/update-post.dto';
 
 
 @Processor('image')
@@ -16,15 +17,17 @@ export class QueueConsumer {
   @Process('upload-imgur')
   async uploadImgur(job: Job) {
     this.logger.log('uploadImgur: ' + job.data.coverUrl);
-    let id = job.data.id;
+    const id = job.data.id;
     try {
-      let response = await this.imgurService.authAndUploadImgur(job.data.coverUrl, 30);
-      let link = response.data.link;
-      await this.postsRepository.updatePost(id, PostStatus.DONE, link)
+      const response = await this.imgurService.authAndUploadImgur(job.data.coverUrl, 30);
+      const link = response.data.link;
+      const dto = new UpdatePostDto(id, PostStatus.DONE, link);
+      await this.postsRepository.updatePost(dto)
       return {imgurCoverUrl: link, id: id};
     } catch (e) {
       this.logger.error('uploadImgur error: ', e);
-      await this.postsRepository.updatePost(id, PostStatus.DONE)
+      const dto = UpdatePostDto.create(id, PostStatus.ERROR);
+      await this.postsRepository.updatePost(dto)
       throw Error('uploadImgur error: ' + e.message);
     }
 

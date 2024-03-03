@@ -25,3 +25,15 @@ Content-Type: application/json
 }
 
 ###
+
+# update posts
+PUT http://localhost:3000/posts
+Content-Type: application/json
+
+{
+  "id": 3,
+  "status": "UPLOADING",
+  "imgurUrl": "test"
+}
+
+###

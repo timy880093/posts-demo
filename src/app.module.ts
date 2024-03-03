@@ -1,22 +1,22 @@
-import {Module} from '@nestjs/common';
-import {AppController} from './app.controller';
-import {AppService} from './app.service';
-import {PostsModule} from './posts/posts.module';
-import {QueueProducer} from "./posts/queue/queue.producer";
-import {BullModule} from "@nestjs/bull";
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { PostsModule } from './posts/posts.module';
+import { BullModule } from '@nestjs/bull';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
     PostsModule,
     BullModule.forRoot({
       redis: {
-        host: 'localhost',
-        port: 6379,
-      },
+        host: configuration().redis.host,
+        port: Number(configuration().redis.port)
+      }
     })
   ],
   controllers: [AppController],
-  providers: [AppService, QueueProducer]
+  providers: [AppService]
 })
 export class AppModule {
 }

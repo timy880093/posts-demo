@@ -1,9 +1,10 @@
-import {Injectable, Logger} from '@nestjs/common';
-import {Config, JsonDB} from 'node-json-db';
-import {PostsEntity} from './dto/posts.entity';
-import {PostStatus} from './dto/post-status.enum';
-import {ConfigService} from '@nestjs/config';
-import * as moment from "moment/moment";
+import { Injectable, Logger } from '@nestjs/common';
+import { Config, JsonDB } from 'node-json-db';
+import { PostsEntity } from './dto/posts.entity';
+import { PostStatus } from './dto/post-status.enum';
+import { ConfigService } from '@nestjs/config';
+import * as moment from 'moment/moment';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostsRepository {
@@ -17,7 +18,7 @@ export class PostsRepository {
   constructor(private readonly configService: ConfigService) {
     const dbName = configService.get('database.name');
     const dbFile = configService.get('database.file');
-    this.db = new JsonDB(new Config(dbFile, true, false, '/'));
+    this.db = new JsonDB(new Config(dbFile, true, true, '/'));
     this.dataPath = `/${dbName}/data`;
     this.maxIdPath = `/${dbName}/maxId`;
     this.initData(dbName).then(() => this.logger.debug('check database ok'));
@@ -26,7 +27,6 @@ export class PostsRepository {
   async initData(dbName: string) {
     const exists = await this.db.exists(`/${dbName}`);
     if (!exists) {
-      // const defaultData = `{ "${dbName}": [], "${dbName}_max_id": 0 }`.replace('/', '');
       const defaultData = `
       {
         "${dbName}": {
@@ -40,8 +40,6 @@ export class PostsRepository {
   }
 
   async getPosts() {
-    // this.logger.debug('execute getPosts');
-    // await this.db.reload();
     return await this.db.getData(this.dataPath).then(data => JSON.stringify(data || [], null, 4));
   }
 
@@ -51,41 +49,56 @@ export class PostsRepository {
     return obj.filter(p => p.status === status);
   }
 
-  async createPost(dto: PostsEntity) {
-    // this.logger.debug('execute createPost: ', dto);
+  async createPost(entity: PostsEntity) {
     try {
-      // await this.db.reload();
-      const id = await this.db.getIndex(this.dataPath, dto.id.toString());
-      if (id <= 0) {
-        await this.insertPost(dto);
-        await this.updateMaxId(dto.id);
-      } else {
-        throw Error('id is exists');
+      const id = await this.parseId(entity.id);
+      const index = await this.getIndex(id);
+
+      if (index > 0) {
+        throw Error(`id:${id} is exists, please try again with another id.`);
       }
+      // index not exists
+      await this.insertPost(entity);
+      await this.updateMaxId(id);
+      this.logger.debug('createPost ok: ', entity);
     } catch (e) {
       throw Error('createPost error: ' + e.message);
     }
 
   }
 
-  async updatePost(id: number, status: PostStatus, imgurUrl: string = null) {
-    this.logger.debug('execute updatePost: ', id, imgurUrl);
+  private async parseId(id: number) {
+    return id ? id : (await this.getMaxId() + 1);
+  }
+
+  private getIndex(id: number) {
+    return this.db.getIndex(this.dataPath, id, 'id');
+  }
+
+  private getData(index: number) {
+    return this.db.getObjectDefault(`${this.dataPath}[${index}]`, {});
+  }
+
+  async updatePost(dto: UpdatePostDto) {
     try {
-      const post: any = await this.db.getObject(`${this.dataPath}[${id - 1}]`);
-      post.imgurCoverUrl = imgurUrl;
-      post.status = status;
-      post.updateAt = moment().format('YYYY-MM-DD HH:mm:ss')
-      await this.db.push(`${this.dataPath}[${id - 1}]`, post);
-      this.logger.debug('updatePost ok: ', post);
+      const index = await this.getIndex(dto.id);
+      const data = await this.getData(index);
+
+      const entity = PostsEntity.convert(data);
+      entity.imgurCoverUrl = dto.imgurUrl;
+      entity.status = dto.status;
+      entity.updateAt = moment().format('YYYY-MM-DD HH:mm:ss');
+
+      await this.db.push(`${this.dataPath}[${index}]`, entity, true);
+      this.logger.debug('updatePost ok: ', entity);
+      return entity;
     } catch (e) {
       throw Error('updatePost error: ' + e.message);
     }
 
-
   }
 
   async getMaxId() {
-    this.logger.debug('execute getMaxId');
     return await this.db.getObjectDefault(this.maxIdPath, 0);
   }
 

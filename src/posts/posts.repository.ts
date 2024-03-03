@@ -40,7 +40,7 @@ export class PostsRepository {
   }
 
   async getPosts() {
-    return await this.db.getData(this.dataPath).then(data => JSON.stringify(data || [], null, 4));
+    return this.db.getData(this.dataPath).then(data => JSON.stringify(data || [], null, 4));
   }
 
   async getPostsByStatus(status: PostStatus) {
@@ -99,7 +99,7 @@ export class PostsRepository {
   }
 
   async getMaxId() {
-    return await this.db.getObjectDefault(this.maxIdPath, 0);
+    return this.db.getObjectDefault(this.maxIdPath, 0);
   }
 
   async updateMaxId(id: number) {

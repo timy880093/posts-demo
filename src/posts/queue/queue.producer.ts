@@ -16,7 +16,7 @@ export class QueueProducer {
   }
 
   async getJobs() {
-    return await this.imgurQueue.getJobCounts();
+    return this.imgurQueue.getJobCounts();
   }
 
 }

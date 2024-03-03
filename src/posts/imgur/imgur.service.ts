@@ -47,7 +47,7 @@ export class ImgurService {
     const config = {
       headers: {'Content-Type': 'application/json'}
     };
-    return await axios.post(this.tokenUrl, data, config)
+    return axios.post(this.tokenUrl, data, config)
       .then(response => {
         this.logger.debug('getToken ok: ', response.data);
         return response.data.access_token;
@@ -75,7 +75,7 @@ export class ImgurService {
 
   async authAndUploadImgur(url: string, delay: number = 0) {
     try {
-      return await this.uploadImgur(url, delay);
+      return this.uploadImgur(url, delay);
     } catch (e) {
       if (e.message.includes('403')) {
         const accesToken = await this.getAccessToken();

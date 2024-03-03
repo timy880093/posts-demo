@@ -13,7 +13,7 @@ export class ImgurController {
   async getAccessToken() {
     this.logger.log('getAccessToken');
     try {
-      return await this.imgurService.getAccessToken();
+      return this.imgurService.getAccessToken();
     } catch (e) {
       throw new HttpException(e.message, 400);
     }

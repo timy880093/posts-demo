@@ -53,12 +53,7 @@ export class PostsRepository {
   async createPost(entity: PostsEntity) {
     try {
       const id = await this.parseId(entity.id);
-      const index = await this.getIndex(id);
-
-      if (index > 0) {
-        throw Error(`id:${id} is exists, please try again with another id.`);
-      }
-      // index not exists
+      await this.checkIdExists(id)
       await this.insertPost(entity);
       await this.updateMaxId(id);
       this.logger.debug('createPost ok: ', JSON.stringify(entity));
@@ -66,6 +61,14 @@ export class PostsRepository {
       throw Error('createPost error: ' + this.exceptionHandler.message(e));
     }
 
+  }
+
+  private async checkIdExists(id: number) {
+    const index = await this.getIndex(id);
+    this.logger.log('test1: ',id, index);
+    if (index >= 0) {
+      throw Error(`id:${id} is exists, please try again with another id.`);
+    }
   }
 
   private async parseId(id: number) {

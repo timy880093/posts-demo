@@ -1,10 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Config, JsonDB } from 'node-json-db';
-import { PostsEntity } from './dto/posts.entity';
-import { PostStatus } from './dto/post-status.enum';
-import { ConfigService } from '@nestjs/config';
-import * as moment from 'moment/moment';
-import { UpdatePostDto } from './dto/update-post.dto';
+import {Injectable, Logger} from '@nestjs/common';
+import {Config, JsonDB} from 'node-json-db';
+import {PostsEntity} from './dto/posts.entity';
+import {PostStatus} from './dto/post-status.enum';
+import {ConfigService} from '@nestjs/config';
+import moment from "moment";
+import {UpdatePostDto} from './dto/update-post.dto';
+import {ExceptionHandler} from "./exception/exception.handler";
 
 @Injectable()
 export class PostsRepository {
@@ -15,7 +16,7 @@ export class PostsRepository {
   private readonly maxIdPath: string;
 
   // constructor(private readonly dbFile: string, private readonly dbName: string) {
-  constructor(private readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService, private readonly exceptionHandler: ExceptionHandler) {
     const dbName = configService.get('database.name');
     const dbFile = configService.get('database.file');
     this.db = new JsonDB(new Config(dbFile, true, true, '/'));
@@ -60,9 +61,9 @@ export class PostsRepository {
       // index not exists
       await this.insertPost(entity);
       await this.updateMaxId(id);
-      this.logger.debug('createPost ok: ', entity);
+      this.logger.debug('createPost ok: ', JSON.stringify(entity));
     } catch (e) {
-      throw Error('createPost error: ' + e.message);
+      throw Error('createPost error: ' + this.exceptionHandler.message(e));
     }
 
   }
@@ -90,10 +91,10 @@ export class PostsRepository {
       entity.updateAt = moment().format('YYYY-MM-DD HH:mm:ss');
 
       await this.db.push(`${this.dataPath}[${index}]`, entity, true);
-      this.logger.debug('updatePost ok: ', entity);
+      this.logger.debug('updatePost ok: ', JSON.stringify(entity));
       return entity;
     } catch (e) {
-      throw Error('updatePost error: ' + e.message);
+      throw Error('updatePost error: ' + this.exceptionHandler.message(e));
     }
 
   }
@@ -108,7 +109,7 @@ export class PostsRepository {
   }
 
   async insertPost(dto: PostsEntity) {
-    this.logger.debug('execute insertPost: ', dto);
+    this.logger.debug('execute insertPost: ', JSON.stringify(dto));
     await this.db.push(`${this.dataPath}[]`, dto);
   }
 

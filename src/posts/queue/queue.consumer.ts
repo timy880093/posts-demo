@@ -4,14 +4,15 @@ import {Process, Processor} from '@nestjs/bull';
 import {ImgurService} from "../imgur/imgur.service";
 import {PostsRepository} from "../posts.repository";
 import {PostStatus} from "../dto/post-status.enum";
-import { UpdatePostDto } from '../dto/update-post.dto';
+import {UpdatePostDto} from '../dto/update-post.dto';
+import {ExceptionHandler} from "../exception/exception.handler";
 
 
 @Processor('image')
 export class QueueConsumer {
   private readonly logger = new Logger(QueueConsumer.name);
 
-  constructor(private readonly imgurService: ImgurService, private readonly postsRepository: PostsRepository) {
+  constructor(private readonly imgurService: ImgurService, private readonly postsRepository: PostsRepository, private readonly exceptionHandler: ExceptionHandler) {
   }
 
   @Process('upload-imgur')
@@ -28,7 +29,7 @@ export class QueueConsumer {
       this.logger.error('uploadImgur error: ', e);
       const dto = UpdatePostDto.create(id, PostStatus.ERROR);
       await this.postsRepository.updatePost(dto)
-      throw Error('uploadImgur error: ' + e.message);
+      throw Error('uploadImgur error: ' + this.exceptionHandler.message(e));
     }
 
   }

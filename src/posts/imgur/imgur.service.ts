@@ -1,6 +1,7 @@
 import {HttpException, Injectable, Logger} from '@nestjs/common';
 import {ConfigService} from '@nestjs/config';
 import axios from 'axios';
+import {ExceptionHandler} from "../exception/exception.handler";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const FormData = require('form-data');
@@ -16,19 +17,13 @@ export class ImgurService {
   private readonly albumId: string;
   private accessToken: string = '';
 
-  // private client: ImgurClient;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService, private readonly exceptionHandler: ExceptionHandler) {
     this.tokenUrl = this.configService.get('imgur.tokenUrl');
     this.clientId = this.configService.get('imgur.clientId');
     this.clientSecret = this.configService.get('imgur.clientSecret');
     this.refreshToken = this.configService.get('imgur.refreshToken');
     this.albumId = this.configService.get('imgur.albumId');
-    // this.client = new ImgurClient({
-    //   clientId: this.clientId,
-    //   clientSecret: this.clientSecret,
-    //   refreshToken: this.refreshToken
-    // });
   }
 
   refreshAccessToken(newAccessToken: string) {
@@ -49,49 +44,34 @@ export class ImgurService {
     };
     return axios.post(this.tokenUrl, data, config)
       .then(response => {
-        this.logger.debug('getToken ok: ', response.data);
+        this.logger.debug('getToken ok: ', JSON.stringify(response.data));
         return response.data.access_token;
       }).catch(error => {
-        this.logger.debug('getToken error: ', error);
         throw Error('Failed to get token: ' + error.message);
       });
 
   }
 
-  // async uploadToImgur2(url: string) {
-  //   const response = await this.client.upload({
-  //     // image: fs.createReadStream('test.jpg'),
-  //     // type: 'stream',
-  //     // album: 'ilBSdia',
-  //
-  //     album: this.albumId,
-  //     image: url,
-  //     title: 'Meme',
-  //     description: url
-  //   });
-  //   console.log(response);
-  //   return response;
-  // }
-
   async authAndUploadImgur(url: string, delay: number = 0) {
     try {
       return this.uploadImgur(url, delay);
     } catch (e) {
-      if (e.message.includes('403')) {
+      let message = this.exceptionHandler.message(e);
+      if (message.includes('403')) {
         const accesToken = await this.getAccessToken();
         this.refreshAccessToken(accesToken);
         try {
           return this.uploadImgur(url, delay);
-        } catch (e) {
-          this.logger.log('uploadToImgur error: new token: ' + e.message)
-          throw new HttpException(e.message, 403);
+        } catch (e2) {
+          message = 'uploadToImgur error: new token: ' + this.exceptionHandler.message(e2);
+          throw new HttpException(message, 403);
         }
-      } else if (e.message.includes('429')) {
-        this.logger.log('uploadToImgur warn: Too Many Requests' + e.message)
-        throw new HttpException(e.message, 429);
+      } else if (message.includes('429')) {
+        message = 'uploadToImgur warn: Too Many Requests , ' + this.exceptionHandler.message(e);
+        throw new HttpException(message, 429);
       } else {
-        this.logger.log('uploadToImgur error: new token: ' + e.message)
-        throw new HttpException(e.message, 400);
+        message = 'uploadToImgur error: new token: ' + this.exceptionHandler.message(e);
+        throw new HttpException(message, 400);
       }
     }
   }

@@ -1,12 +1,13 @@
 import {Body, Controller, HttpException, Logger, Post} from '@nestjs/common';
 import {ImgurService} from './imgur.service';
+import {ExceptionHandler} from "../exception/exception.handler";
 
 @Controller('imgur')
 export class ImgurController {
   private readonly logger = new Logger(ImgurController.name);
   1;
 
-  constructor(private readonly imgurService: ImgurService) {
+  constructor(private readonly imgurService: ImgurService, private readonly exceptionHandler: ExceptionHandler) {
   }
 
   @Post('token')
@@ -15,7 +16,7 @@ export class ImgurController {
     try {
       return this.imgurService.getAccessToken();
     } catch (e) {
-      throw new HttpException(e.message, 400);
+      throw new HttpException('getAccessToken error: ' + this.exceptionHandler.message(e), 400);
     }
   }
 

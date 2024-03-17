@@ -1,5 +1,4 @@
-import { PostStatus } from './post-status.enum';
-import { CreatePostDto } from './create-post.dto';
+import {PostStatus} from './post-status.enum';
 
 export class PostsEntity {
   readonly id: number;
@@ -25,6 +24,10 @@ export class PostsEntity {
 
   static convert(obj: any): PostsEntity {
     return new PostsEntity(obj.id, obj.coverUrl, obj.imgurCoverUrl, obj.status, obj.createAt, obj.updateAt);
+  }
+
+  toString(): string {
+    return `id: ${this.id}, coverUrl: ${this.coverUrl}, imgurCoverUrl: ${this.imgurCoverUrl}, status: ${this.status}, createAt: ${this.createAt}, updateAt: ${this.updateAt}`;
   }
 
 }

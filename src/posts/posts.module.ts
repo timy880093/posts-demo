@@ -1,16 +1,17 @@
-import { Module } from '@nestjs/common';
-import { PostsController } from './posts.controller';
-import { PostsService } from './posts.service';
-import { PostsRepository } from './posts.repository';
-import { ConfigModule } from '@nestjs/config';
-import { ScheduleModule } from '@nestjs/schedule';
-import { TaskService } from './task/task.service';
-import { BullModule } from '@nestjs/bull';
-import { ImgurService } from './imgur/imgur.service';
-import { ImgurController } from './imgur/imgur.controller';
+import {Module} from '@nestjs/common';
+import {PostsController} from './posts.controller';
+import {PostsService} from './posts.service';
+import {PostsRepository} from './posts.repository';
+import {ConfigModule} from '@nestjs/config';
+import {ScheduleModule} from '@nestjs/schedule';
+import {TaskService} from './task/task.service';
+import {BullModule} from '@nestjs/bull';
+import {ImgurService} from './imgur/imgur.service';
+import {ImgurController} from './imgur/imgur.controller';
 import configuration from '../config/configuration';
-import { QueueConsumer } from './queue/queue.consumer';
-import { QueueProducer } from './queue/queue.producer';
+import {QueueConsumer} from './queue/queue.consumer';
+import {QueueProducer} from './queue/queue.producer';
+import {ExceptionHandler} from "./exception/exception.handler";
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { QueueProducer } from './queue/queue.producer';
     TaskService,
     ImgurService,
     QueueConsumer,
-    QueueProducer
+    QueueProducer,
+    ExceptionHandler
   ]
 })
 export class PostsModule {

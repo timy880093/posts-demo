@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PostsModule } from './posts/posts.module';
-import { BullModule } from '@nestjs/bull';
+import {Module} from '@nestjs/common';
+import {AppController} from './app.controller';
+import {AppService} from './app.service';
+import {PostsModule} from './posts/posts.module';
+import {BullModule} from '@nestjs/bull';
 import configuration from './config/configuration';
 
 @Module({

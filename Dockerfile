@@ -1,14 +1,11 @@
 FROM node:18-alpine
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-RUN npm install -g @nestjs/cli
-
+#COPY . .
 COPY package*.json ./
 
 RUN npm install --frozen-lockfile
-
-COPY . .
 
 ENV PORT $PORT
 

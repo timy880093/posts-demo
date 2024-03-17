@@ -41,25 +41,12 @@
     IMGUR_ALBUM_ID=ilBSdia
   ```
 
-### Running on docker
+### Start on Docker
+`docker compose up -d`
 
-* config: add `.env` at rootPath
-    ```
-    PORT=3000
-    DATABASE_FILE=C:\_Code\Nodejs\posts-demo\db.json
-    DATABASE_NAME=posts
-    
-    IMGUR_TOKEN_URL=https://api.imgur.com/oauth2/token
-    IMGUR_CLIENT_ID=7cd2c86728bbcc2
-    IMGUR_CLIENT_SECRET=d72573168c2083e1ee89a582f66c65de41b90a2c
-    IMGUR_REFRESH_TOKEN=5e499f00e54bbf4911f9f41741acc71be58a9969
-    IMGUR_ALBUM_ID=ilBSdia
-    ```
 
-### Run the sample
-
-1. `docker compose up -d`
-2. `npm run start`
+### Start on Local
+`npm run dev`
 
 
 ## Reference

@@ -1,6 +1,6 @@
 FROM node:18-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 RUN npm install -g @nestjs/cli
 
@@ -10,6 +10,8 @@ RUN npm install --frozen-lockfile
 
 COPY . .
 
-EXPOSE 3000
+ENV PORT $PORT
+
+EXPOSE $PORT
 
 CMD ["npm", "run", "start:dev"]

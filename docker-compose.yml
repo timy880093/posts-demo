@@ -1,7 +1,14 @@
 version: '3.9'
 services:
+  posts-demo:
+    container_name: posts-demo
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
   redis:
-    container_name: redis_testqueues
+    container_name: redis
     image: 'redis:latest'
     restart: always
     ports:

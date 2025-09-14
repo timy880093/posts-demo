@@ -1,4 +1,4 @@
-# Posts
+# 小工具：產生圖片縮網址
 
 ## Description
 * api:
